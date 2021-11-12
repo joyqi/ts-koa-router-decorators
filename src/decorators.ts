@@ -8,26 +8,41 @@ interface Methods {
     [method: string]: Method | undefined;
 }
 
-const defaultRouter: Router = new Router();
+interface Routes {
+    [name: string]: any[];
+}
+
 const routers: Router[] = [];
-const prop = Symbol('router');
+const routes: Routes = {};
 
-export function controller(path: string) {
-    return (target: Function) => {
-        const router = new Router({
-            prefix: path
-        });
+export function controller(prefix: string) {
+    return <T extends { new (...args: any[]): {} }>(Controller: T) => {
+        return class A extends Controller {
+            private static routes = [];
 
-        target.prototype[prop] = router;
-        routers.push(router);
+            constructor(...args: any[]) {
+                super(...args);
+
+                const router = new Router({
+                    prefix
+                });
+
+                console.log((Controller as any).routes);
+
+                for (const route of routes[Controller.name]) {
+                    const [path, method, middlewares] = route;
+                    middlewares.push(method.bind(this));
+
+                    router.register(path, [method], middlewares);
+                }
+
+                routers.push(router);
+            }
+        }
     };
 }
 
 export function route(app: Koa) {
-    if (defaultRouter.routes().length > 0) {
-        routers.unshift(defaultRouter);
-    }
-
     for (const router of routers) {
         app.use(router.routes());
         app.use(router.allowedMethods());
@@ -48,10 +63,8 @@ export const methods: Methods = {
 function register(method: string): Method {
     return (path: string, ...middlewares: IMiddleware[]) => {
         return (target: Function, propertyKey: string, descriptor: PropertyDescriptor) => {
-            const router: Router = target.prototype[prop] || defaultRouter;
-            middlewares.push(descriptor.value);
-
-            router.register(path, [method], middlewares);
+            (target as any).routes = [];
+            (target as any).routes.push([path, descriptor.value, middlewares]);
         }
     };
 }

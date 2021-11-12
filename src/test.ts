@@ -12,6 +12,7 @@ class Test {
 
 const app = new Koa();
 route(app);
+new Test();
 
 app.listen(7000, () => {
     console.log('hello');
