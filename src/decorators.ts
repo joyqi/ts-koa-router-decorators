@@ -1,80 +1,64 @@
 import Router, { IMiddleware } from "koa-router";
 import Koa from 'koa';
-import Application from "koa";
 
-type Method = (path: string, ...middlewares: Application.Middleware[]) => any
+type Method = 'put' | 'get' | 'post' | 'delete' | 'path' | 'options' | 'head' | 'patch';
 
-interface Methods {
-    [method: string]: Method | undefined;
-}
+type MethodHandler = (path: string, ...middlewares: IMiddleware[]) => any;
 
-interface Routes {
-    [name: string]: any[];
-}
+type Route = [Method[], string, Function, IMiddleware[]];
 
-const routers: Router[] = [];
-const routes: Routes = {};
+type RouterController = [Router, any];
+
+const routerControllers: RouterController[] = [];
 
 export function controller(prefix: string) {
     return <T extends { new (...args: any[]): {} }>(Controller: T) => {
-        return class A extends Controller {
-            private static routes = [];
-
+        const router = new Router({ prefix });
+        
+        const controller = class extends Controller {
             constructor(...args: any[]) {
-                super(...args);
+                super(...args); 
 
-                const router = new Router({
-                    prefix
-                });
+                const routes: Route[] = Controller.prototype.routes;
 
-                console.log((Controller as any).routes);
+                if (routes) {
+                    for (const route of routes) {
+                        const [methods, path, handler, middlewares] = route;
+                        middlewares.push(handler.bind(this));
 
-                for (const route of routes[Controller.name]) {
-                    const [path, method, middlewares] = route;
-                    middlewares.push(method.bind(this));
-
-                    router.register(path, [method], middlewares);
+                        router.register(path, methods, middlewares);
+                    }
                 }
-
-                routers.push(router);
             }
-        }
+        };
+
+        routerControllers.push([router, controller]);
     };
 }
 
 export function route(app: Koa) {
-    for (const router of routers) {
+    for (const [router, controller] of routerControllers) {
+        new controller();
         app.use(router.routes());
         app.use(router.allowedMethods());
     }
 }
 
-export const methods: Methods = {
-    put: undefined,
-    get: undefined,
-    post: undefined,
-    delete: undefined,
-    patch: undefined,
-    all: undefined,
-    options: undefined,
-    head: undefined
-};
-
-function register(method: string): Method {
+function register(methods: Method[]): MethodHandler {
     return (path: string, ...middlewares: IMiddleware[]) => {
-        return (target: Function, propertyKey: string, descriptor: PropertyDescriptor) => {
-            (target as any).routes = [];
-            (target as any).routes.push([path, descriptor.value, middlewares]);
+        return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+            target.routes = target.routes || [];
+            target.routes.push([methods, path, descriptor.value, middlewares]);
         }
     };
 }
 
-export const put = register('put');
-export const get = register('get');
-export const post = register('post');
-export const del = register('delete');
-export const patch = register('patch');
-export const all = register('all');
-export const any = register('all');
-export const options = register('options');
-export const head = register('head');
+export const put = register(['put']);
+export const get = register(['get']);
+export const post = register(['post']);
+export const del = register(['delete']);
+export const patch = register(['patch']);
+export const options = register(['options']);
+export const head = register(['head']);
+export const any = register(['put', 'get', 'post', 'delete', 'path', 'options', 'head', 'patch']);
+export const all = register(['put', 'get', 'post', 'delete', 'path', 'options', 'head', 'patch']);
