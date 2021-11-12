@@ -11,7 +11,7 @@ type RouterController = [Router, any];
 
 const routerControllers: RouterController[] = [];
 
-export function controller(prefix: string) {
+export function controller(prefix = '') {
     return <T extends { new (...args: any[]): {} }>(Controller: T) => {
         const router = new Router({ prefix });
         
@@ -49,6 +49,8 @@ function register(methods: Method[]): MethodHandler {
         return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
             target.routes = target.routes || [];
             target.routes.push([methods, path, descriptor.value, middlewares]);
+            
+            return descriptor;
         }
     };
 }
