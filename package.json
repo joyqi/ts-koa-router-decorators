@@ -1,6 +1,6 @@
 {
   "name": "ts-koa-router-decorators",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Koa router decorators for TypeScript",
   "main": "index.js",
   "scripts": {
