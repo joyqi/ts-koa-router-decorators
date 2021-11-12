@@ -1,0 +1,27 @@
+{
+  "name": "ts-koa-router-decorators",
+  "version": "1.0.0",
+  "description": "Koa router decorators for TypeScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joyqi/ts-koa-router-decorators.git"
+  },
+  "author": "joyqi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joyqi/ts-koa-router-decorators/issues"
+  },
+  "homepage": "https://github.com/joyqi/ts-koa-router-decorators#readme",
+  "devDependencies": {
+    "@types/koa": "^2.13.4",
+    "@types/koa-router": "^7.4.4",
+    "koa": "^2.13.4",
+    "koa-router": "^10.1.1",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
+  }
+}
