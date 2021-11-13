@@ -41,15 +41,15 @@ app.listen(8000, () => {
 
 * `@controller(prefix: string)`, prefix default value is `''`
 * Http methods
-  * `get(path: string, ...middlewares: IMiddleware[])` GET method
-  * `post(path: string, ...middlewares: IMiddleware[])` POST method
-  * `put(path: string, ...middlewares: IMiddleware[])` PUT method
-  * `del(path: string, ...middlewares: IMiddleware[])` DELETE method
-  * `patch(path: string, ...middlewares: IMiddleware[])` PATCH method
-  * `options(path: string, ...middlewares: IMiddleware[])` OPTIONS method
-  * `head(path: string, ...middlewares: IMiddleware[])` HEAD method
-  * `all(path: string, ...middlewares: IMiddleware[])` All methods
-  * `any(path: string, ...middlewares: IMiddleware[])` Alias to `all`
+  * `@get(path: string, ...middlewares: IMiddleware[])` GET method
+  * `@post(path: string, ...middlewares: IMiddleware[])` POST method
+  * `@put(path: string, ...middlewares: IMiddleware[])` PUT method
+  * `@del(path: string, ...middlewares: IMiddleware[])` DELETE method
+  * `@patch(path: string, ...middlewares: IMiddleware[])` PATCH method
+  * `@options(path: string, ...middlewares: IMiddleware[])` OPTIONS method
+  * `@head(path: string, ...middlewares: IMiddleware[])` HEAD method
+  * `@all(path: string, ...middlewares: IMiddleware[])` All methods
+  * `@any(path: string, ...middlewares: IMiddleware[])` Alias to `all`
 
 ### Functions
 
