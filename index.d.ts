@@ -1,6 +1,7 @@
 import Koa from 'koa';
+import { IMiddleware } from "koa-router";
 
-namespace KoaRouterDecorators {
+declare namespace KoaRouterDecorators {
     export function route(app: Koa);
 
     export function controller(prefix?: string): Function;
